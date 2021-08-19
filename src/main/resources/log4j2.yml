@@ -1,0 +1,39 @@
+Configuration:
+  status: info
+  # 定义全局变量
+  Properties:
+    Property:
+      - name: log.path
+        value: /mnt/logs/redis-key
+  Appenders:
+    # 控制台日志
+    Console:
+      name: console
+      target: SYSTEM_OUT
+      PatternLayout:
+        Pattern: "[%X{request_id}] %-d{yyyy-MM-dd HH:mm:ss} - [%p] [%C{1}:%L %M] %m%n"
+      ThresholdFilter:
+        level: info
+        onMatch: ACCEPT
+        onMismatch: DENY
+    # 文件日志
+    RollingFile:
+      - name: redis-key
+        fileName: "${log.path}/redis-key.log"
+        filePattern: "${log.path}/redis-key_%d{yyyy-MM-dd}.log"
+        PatternLayout:
+          Pattern: "[%X{request_id}] %-d{yyyy-MM-dd HH:mm:ss} - [%p] [%C{1}:%L %M] %m%n"
+        Policies:
+          TimeBasedTriggeringPolicy:
+            interval: 1
+            modulate: true
+        ThresholdFilter:
+          level: info
+          onMatch: ACCEPT
+          onMismatch: DENY
+  Loggers:
+    Root:
+      level: info
+      AppenderRef:
+        - ref: redis-key
+        - ref: console
